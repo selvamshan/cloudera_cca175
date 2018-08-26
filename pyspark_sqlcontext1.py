@@ -41,3 +41,45 @@ map(lambda p: Row(
 productsDF.registerTempTable("products")
 
 sqlContext.sql("use selvamsandeep_retail_db_txt1")
+
+orders_csv = spark. \
+    read.csv("/media/selva/d/Big data/data/retail_db/orders"). \
+    toDF('order_id', 'order_date', 'order_customer_id', 'order_status')
+
+orders = orders_csv. \
+    withColumn('order_id', orders_csv.order_id.cast(IntegerType())). \
+    withColumn('order_customer_id', orders_csv.order_customer_id.cast(IntegerType()))
+
+orders.printSchema()
+#orders.show()
+
+order_items_csv = spark. \
+    read.csv('/media/selva/d/Big data/data/retail_db/order_items'). \
+    toDF('order_item_id', 'order_item_order_id', 'order_item_product_id',
+         'order_item_quantity', 'order_item_subtotal', 'order_item_product_price')
+
+order_items = order_items_csv. \
+    withColumn('order_item_id', order_items_csv.order_item_id.cast(IntegerType())). \
+    withColumn('order_item_order_id', order_items_csv.order_item_order_id.cast(IntegerType())). \
+    withColumn('order_item_product_id', order_items_csv.order_item_product_id.cast(IntegerType())). \
+    withColumn('order_item_quantity', order_items_csv.order_item_quantity.cast(IntegerType())). \
+    withColumn('order_item_subtotal', order_items_csv.order_item_subtotal.cast(FloatType())). \
+    withColumn('order_item_product_price', order_items_csv.order_item_product_price.cast(FloatType()))
+
+order_items.printSchema()
+
+orders = spark.read. \
+    jdbc('jdbc:mysql://127.0.0.1:3306',
+         'classicmodels.orders',
+         numPartitions=4,
+         properties={'user':'root','password':'suntv'})
+
+orders.printSchema()
+
+orderdetails = spark.read. \
+    jdbc('jdbc:mysql://127.0.0.1:3306',
+         'classicmodels.orderdetails',
+         numPartitions=4,
+         properties={'user':'root','password':'suntv'})
+
+orderdetails.printSchema()
