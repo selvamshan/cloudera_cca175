@@ -42,6 +42,12 @@ productsDF.registerTempTable("products")
 
 sqlContext.sql("use selvamsandeep_retail_db_txt1")
 
+#pyspark --master yarn --conf spark.ui.port=12568 \
+#  --jars /usr/share/java/mysql-connector-java.jar \
+#  --driver-class-path /usr/share/jave/mysql-connector-java.jar 
+
+from pyspark.sql.types import IntegerType, FloatType
+
 orders_csv = spark. \
     read.csv("/media/selva/d/Big data/data/retail_db/orders"). \
     toDF('order_id', 'order_date', 'order_customer_id', 'order_status')
